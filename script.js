@@ -1,3 +1,29 @@
+
+
+const newQuoteBtn = document.getElementById('new-quote');
+
+newQuoteBtn.addEventListener('click', (e) =>{
+  getQuotes();
+});
+
+function renderDomWithQuote(quoteData){
+  // grab ui elements
+  const quoteContainer = document.getElementById('quote-container');
+  const quoteText = document.getElementById('quote');
+  const authorText = document.getElementById('author');
+  const twitterBtn = document.getElementById('twitter');
+
+  if(quoteData.text.length > 120) {
+    quoteText.classList.add('long-quote');
+  } else {
+    quoteText.classList.remove('long-quote');
+  }
+
+  // update text on ui elements
+  authorText.textContent = quoteData.author;
+  quoteText.textContent = quoteData.text;
+}
+
 // get quotes from API
 let apiQuotes = [];
 
@@ -5,20 +31,25 @@ let apiQuotes = [];
 
 function newQuote(){
   // pick a random quote from the response
+  console.log('From Api')
   const quote = apiQuotes[Math.floor(Math.random() * apiQuotes.length)];
-  console.log(quote);
+  // pain the dom with data returned from api
+  renderDomWithQuote(quote);
 }
 
+// fallback function that will get some quotes if api is down
 function getLocalQuotes(){
   const quote = localQuotes[Math.floor(Math.random() * localQuotes.length)];
-  if(quote.author === null) {
+  // if the author is null, set it to unkwon
+  if(!quote.author) {
     quote.author = 'Unknown';
   }
-  console.log(quote);
+  // call a function that will paint the dom with data returned from api
+  renderDomWithQuote(quote);
 }
 
 async function getQuotes(){
-  const apiUrl = 'https://twweype.fit/api/quotes';
+  const apiUrl = 'https://type.fit/api/quotes';
 
   try {
     const response = await fetch(apiUrl);
