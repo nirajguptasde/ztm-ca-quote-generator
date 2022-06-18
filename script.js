@@ -4,7 +4,9 @@ let apiQuotes = [];
 // function show new quotes in the dom
 
 function newQuote(){
-  
+  // pick a random quote from the response
+  const quote = apiQuotes[Math.floor(Math.random() * apiQuotes.length)];
+  console.log(quote);
 }
 
 async function getQuotes(){
@@ -21,7 +23,7 @@ async function getQuotes(){
 }
 
 
-
+getQuotes();
 
 
 /*
