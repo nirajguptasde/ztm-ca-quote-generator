@@ -1,18 +1,38 @@
+ const quoteContainer = document.getElementById('quote-container');
+ const quoteText = document.getElementById('quote');
+ const authorText = document.getElementById('author');
+ const newQuoteBtn = document.getElementById('new-quote');
+ const twitterBtn = document.getElementById('twitter');
+ const loader = document.getElementById('loader');
 
 
-const newQuoteBtn = document.getElementById('new-quote');
 
-newQuoteBtn.addEventListener('click', (e) =>{
-  getQuotes();
-});
+
+
+
+
+
+
+
+// get quotes from API
+let apiQuotes = [];
+
+// show loading
+function loading(){
+  loader.hidden = false;
+  quoteContainer.hidden = true;
+}
+
+function complete(){
+  quoteContainer.hidden = false;
+  loader.hidden = true;
+}
+
 
 function renderDomWithQuote(quoteData){
   // grab ui elements
-  const quoteContainer = document.getElementById('quote-container');
-  const quoteText = document.getElementById('quote');
-  const authorText = document.getElementById('author');
-  const twitterBtn = document.getElementById('twitter');
-
+ 
+ 
   if(quoteData.text.length > 120) {
     quoteText.classList.add('long-quote');
   } else {
@@ -24,11 +44,7 @@ function renderDomWithQuote(quoteData){
   quoteText.textContent = quoteData.text;
 }
 
-// get quotes from API
-let apiQuotes = [];
-
-// function show new quotes in the dom
-
+// function to show new quotes in the dom
 function newQuote(){
   // pick a random quote from the response
   console.log('From Api')
@@ -39,22 +55,26 @@ function newQuote(){
 
 // fallback function that will get some quotes if api is down
 function getLocalQuotes(){
+  loading()
   const quote = localQuotes[Math.floor(Math.random() * localQuotes.length)];
   // if the author is null, set it to unkwon
   if(!quote.author) {
     quote.author = 'Unknown';
   }
   // call a function that will paint the dom with data returned from api
+  complete()
   renderDomWithQuote(quote);
 }
 
 async function getQuotes(){
+  loading();
   const apiUrl = 'https://type.fit/api/quotes';
 
   try {
     const response = await fetch(apiUrl);
     apiQuotes = await response.json();
     newQuote();
+    complete();
   } catch(error){
     // if error than fetch the quotes from local quotes
     if(error){
@@ -65,6 +85,19 @@ async function getQuotes(){
   }
 }
 
+//tweet the quote 
+
+function tweetQuote(){
+  const twitterUrl = `https://twitter.com/intent/tweet?text=${quoteText.textContent} - ${authorText.textContent}`;
+  window.open(twitterUrl, '_blank');
+}
+
+// get a new quote
+newQuoteBtn.addEventListener('click', (e) =>{
+  getQuotes();
+});
+
+twitterBtn.addEventListener('click', tweetQuote);
 
 getQuotes();
 
