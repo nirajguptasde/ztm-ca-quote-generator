@@ -5,15 +5,6 @@
  const twitterBtn = document.getElementById('twitter');
  const loader = document.getElementById('loader');
 
-
-
-
-
-
-
-
-
-
 // get quotes from API
 let apiQuotes = [];
 
