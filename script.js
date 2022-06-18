@@ -18,12 +18,12 @@
 let apiQuotes = [];
 
 // show loading
-function loading(){
+function loadPreLoader(){
   loader.hidden = false;
   quoteContainer.hidden = true;
 }
 
-function complete(){
+function completePreLoader(){
   quoteContainer.hidden = false;
   loader.hidden = true;
 }
@@ -45,7 +45,7 @@ function renderDomWithQuote(quoteData){
 }
 
 // function to show new quotes in the dom
-function newQuote(){
+function prepareQuoteForDom(){
   // pick a random quote from the response
   console.log('From Api')
   const quote = apiQuotes[Math.floor(Math.random() * apiQuotes.length)];
@@ -55,26 +55,28 @@ function newQuote(){
 
 // fallback function that will get some quotes if api is down
 function getLocalQuotes(){
-  loading()
+  loadPreLoader()
   const quote = localQuotes[Math.floor(Math.random() * localQuotes.length)];
   // if the author is null, set it to unkwon
   if(!quote.author) {
     quote.author = 'Unknown';
   }
   // call a function that will paint the dom with data returned from api
-  complete()
+  completePreLoader()
   renderDomWithQuote(quote);
 }
 
-async function getQuotes(){
-  loading();
+async function requestNewQuotesFromApi(){
+  // show loader before making a fetch request
+  loadPreLoader();
   const apiUrl = 'https://type.fit/api/quotes';
 
   try {
     const response = await fetch(apiUrl);
     apiQuotes = await response.json();
-    newQuote();
-    complete();
+    prepareQuoteForDom();
+    // hide the loader once the request is complete
+    completePreLoader();
   } catch(error){
     // if error than fetch the quotes from local quotes
     if(error){
@@ -94,12 +96,12 @@ function tweetQuote(){
 
 // get a new quote
 newQuoteBtn.addEventListener('click', (e) =>{
-  getQuotes();
+  requestNewQuotesFromApi();
 });
 
 twitterBtn.addEventListener('click', tweetQuote);
 
-getQuotes();
+requestNewQuotesFromApi();
 
 
 /*
