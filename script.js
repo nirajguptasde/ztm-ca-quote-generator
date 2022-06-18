@@ -9,16 +9,28 @@ function newQuote(){
   console.log(quote);
 }
 
+function getLocalQuotes(){
+  const quote = localQuotes[Math.floor(Math.random() * localQuotes.length)];
+  if(quote.author === null) {
+    quote.author = 'Unknown';
+  }
+  console.log(quote);
+}
+
 async function getQuotes(){
-  const apiUrl = 'https://type.fit/api/quotes';
+  const apiUrl = 'https://twweype.fit/api/quotes';
 
   try {
     const response = await fetch(apiUrl);
     apiQuotes = await response.json();
     newQuote();
   } catch(error){
-    // catch error
-    console.log(error);
+    // if error than fetch the quotes from local quotes
+    if(error){
+      console.log(`Unable to fetch quotes from api, switching to local quotes.`);
+      console.log(error);
+      getLocalQuotes();
+    }
   }
 }
 
